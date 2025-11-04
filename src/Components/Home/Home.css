@@ -1,0 +1,6 @@
+.hero-bg {
+  background-image: url("/public/BG.svg");
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+}
