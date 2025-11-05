@@ -1,8 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import React from "react";
 
-const Search = ({ searchTrm, setSearchTrm }) => {
+const SearchInpt = ({ searchTrm, setSearchTrm }) => {
   return (
     <div className="search">
       <div className="py-3 px-4 flex items-center gap-3  rounded-lg shadow-md">
@@ -18,4 +17,4 @@ const Search = ({ searchTrm, setSearchTrm }) => {
     </div>
   );
 };
-export default Search;
+export default SearchInpt;

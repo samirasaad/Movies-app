@@ -1,0 +1,9 @@
+.movie-card {
+  .no-poster-wrapper {
+    height: 30rem;
+    img {
+      width: 8rem;
+      filter: contrast(0.5);
+    }
+  }
+}
