@@ -1,49 +1,50 @@
-import React, { useEffect, useState } from "react";
-import axiosInstance from "../../Network/Api/Axios";
-import Spinner from "../../Components/SharedUi/Spinner/Spinner";
-import MovieCard from "../../Components/MovieCard/MovieCard";
+import { useState } from "react";
+import axiosInstance from "../../Api/Axios";
 import SearchInpt from "../../Components/SearchInpt/SearchInpt";
-import "./Home.css";
-import NoDataFound from "../../Components/SharedUi/NoDataFound/NoDataFound";
 import { useDebounce } from "react-use";
+import { useInfiniteScroll } from "../../Hooks/InfiniteScroll";
+import MoviesList from "../../Components/Movies/MoviesList/MoviesList";
+import "./Home.css";
+
+const fetchMovies = async (page = 1, srchTrm = "") => {
+  const url = srchTrm
+    ? "search/movie?sort_by=popularity.desc&page=" + page
+    : "discover/movie?sort_by=popularity.desc&page=" + page;
+
+  const params = srchTrm ? { params: { query: srchTrm } } : {};
+
+  try {
+    const response = await axiosInstance.get(url, params);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
 
 function Home() {
   const [searchTrm, setSearchTrm] = useState("");
-  const [movieList, setMovieList] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [debouncedSearchTrm, setDebouncedSearchTrm] = useState("");
 
+  // Debounce search term and update debouncedSearchTrm
+  useDebounce(
+    () => {
+      setDebouncedSearchTrm(searchTrm);
+    },
+    500,
+    [searchTrm]
+  );
 
-  // optimzing search input with debounce
-  useDebounce(()=>{
-    fetchMovies(searchTrm);
-  },500,[searchTrm]);
-
+  const {
+    items: movieList,
+    isLoading,
+    hasMore,
+    loaderRef,
+  } = useInfiniteScroll(fetchMovies, debouncedSearchTrm);
 
   // debounce will fire on mounting and search trm change no need for useeffect
   // useEffect(() => {
   //   fetchMovies(searchTrm);
   // }, [searchTrm]);
-
-  const fetchMovies = async (srchTrm ='') => {
-    const url = srchTrm
-      ? "search/movie?sort_by=popularity.desc"
-      : "discover/movie?sort_by=popularity.desc";
-
-    const params = srchTrm ? { params: { query: srchTrm } } : {};
-
-    try {
-      setIsLoading(true);
-      setMovieList([]);
-      const response = await axiosInstance.get(url, params);
-      console.log(response.data.results);
-      setMovieList(response.data.results);
-    } catch (error) {
-      setMovieList([]);
-      console.error("Error fetching data:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <>
@@ -72,22 +73,15 @@ function Home() {
           </header>
 
           {/* begin:: all movies section */}
-            <h3 className="text-center my-10 text-[2.1rem] text-white font-semibold">
-              All Movies
-            </h3>
-          <section className="all-movies m-10 w-2/3 m-auto">
-            {isLoading ? (
-              <Spinner />
-            ) : movieList.length > 0 ? (
-              <ul>
-                {movieList.map((movie) => (
-                  <MovieCard key={movie.id} movie={movie} />
-                ))}
-              </ul>
-            ) : (
-              <NoDataFound/>
-            )}
-          </section>
+          <h3 className="text-center my-10 text-[2.1rem] text-white font-semibold">
+            All Movies
+          </h3>
+          <MoviesList
+            movieList={movieList}
+            isLoading={isLoading}
+            hasMore={hasMore}
+            loaderRef={loaderRef}
+          />
           {/* end:: all movies section */}
         </div>
       </main>

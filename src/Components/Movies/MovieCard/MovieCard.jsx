@@ -8,15 +8,16 @@ const MovieCard = ({
     vote_average,
     vote_count,
     poster_path,
+    backdrop_path,
     release_date,
     original_language,
   },
 }) => {
   return (
-    <div className="movie-card">
-      {poster_path ? (
+    <div className="movie-card" >
+      {poster_path || backdrop_path ? (
         <img
-          src={`https://image.tmdb.org/t/p/w500/${poster_path}`}
+          src={`https://image.tmdb.org/t/p/w500/${poster_path ? poster_path : backdrop_path}`}
           alt={title}
         />
       ) : (

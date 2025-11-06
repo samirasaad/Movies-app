@@ -4,7 +4,7 @@ import { faSearch } from "@fortawesome/free-solid-svg-icons";
 const SearchInpt = ({ searchTrm, setSearchTrm }) => {
   return (
     <div className="search">
-      <div className="py-3 px-4 flex items-center gap-3  rounded-lg shadow-md">
+      <div className=" px-4 flex items-center gap-3  rounded-lg shadow-md">
         <FontAwesomeIcon icon={faSearch} color="#7c4fff" className="text-2xl" />
         <input
           type="text"
